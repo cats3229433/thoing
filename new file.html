@@ -1,0 +1,318 @@
+<!doctype html><html><head></head><body><!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<link href="https://fonts.googleapis.com/css2?family=Lato:wght@700&display=swap" rel="stylesheet" />
+	<title>ServerplexGWA S3</title>
+	<style>
+		:root {
+			--text-color: #f5f5f5;
+			--accent-color: #7289da;
+		}
+
+		body.light-mode {
+			--text-color: #1a1a1a;
+		}
+
+		html,
+		body {
+			height: 100%;
+			margin: 0;
+			font-family: 'Lato', sans-serif;
+			transition: background 0.3s ease;
+			background: linear-gradient(-45deg, #000000, #d4af37, #c0c0c0, #000000);
+			background-size: 400% 400%;
+			animation: gradientShift 15s ease infinite;
+		}
+
+		body.light-mode {
+			background: linear-gradient(-45deg, #ffffff, #d4af37, #c0c0c0, #ffffff);
+		}
+
+		@keyframes gradientShift {
+			0% {
+				background-position: 0% 50%;
+			}
+
+			50% {
+				background-position: 100% 50%;
+			}
+
+			100% {
+				background-position: 0% 50%;
+			}
+		}
+
+		.overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			width: 100%;
+			height: 7%;
+			background: linear-gradient(-45deg, #000000, #d4af37, #c0c0c0, #000000);
+			background-size: 400% 400%;
+			animation: gradientShift 15s ease infinite, fadeIn 3.8s ease forwards;
+			color: var(--text-color);
+			font-weight: 700;
+			font-size: 1.2em;
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			z-index: 9999;
+			opacity: 0;
+			backdrop-filter: blur(6px);
+			transition: background 0.3s ease;
+		}
+
+		body.light-mode .overlay {
+			background: linear-gradient(-45deg, #ffffff, #d4af37, #c0c0c0, #ffffff);
+		}
+
+		@keyframes fadeIn {
+			to {
+				opacity: 1;
+			}
+		}
+
+		.discord-wrapper {
+			position: absolute;
+			top: 50%;
+			left: 20px;
+			transform: translateY(-50%);
+			display: flex;
+			align-items: center;
+			gap: 8px;
+			z-index: 9999;
+			text-decoration: none;
+		}
+
+		.discord-icon {
+			width: 28px;
+			height: 28px;
+			cursor: pointer;
+		}
+
+		.discord-icon img {
+			width: 100%;
+			height: 100%;
+			display: block;
+			transition: box-shadow 0.3s ease;
+		}
+
+		.discord-icon:hover img {
+			box-shadow: 0 0 10px var(--accent-color);
+		}
+
+		.discord-text {
+			color: var(--accent-color);
+			font-size: 0.9em;
+			font-weight: bold;
+			white-space: nowrap;
+			transition: color 0.3s ease;
+		}
+
+		.discord-wrapper:hover .discord-text {
+			color: #8899ff;
+		}
+
+		@media (max-width: 600px) {
+			.discord-text {
+				display: none;
+			}
+		}
+
+		.fullscreen-toggle {
+			position: absolute;
+			top: 50%;
+			right: 60px;
+			transform: translateY(-50%);
+			width: 24px;
+			height: 24px;
+			cursor: pointer;
+			transition: transform 0.2s ease;
+			animation: pulse 2s infinite;
+		}
+
+		.fullscreen-toggle:hover {
+			transform: translateY(-50%) scale(1.2);
+		}
+
+		@keyframes pulse {
+			0% {
+				transform: translateY(-50%) scale(1);
+			}
+
+			50% {
+				transform: translateY(-50%) scale(1.1);
+			}
+
+			100% {
+				transform: translateY(-50%) scale(1);
+			}
+		}
+
+		.theme-toggle {
+			position: absolute;
+			top: 50%;
+			right: 20px;
+			transform: translateY(-50%);
+			width: 24px;
+			height: 24px;
+			cursor: pointer;
+			fill: var(--text-color);
+			transition: fill 0.3s ease;
+		}
+
+		#delayedIframe {
+			width: 100%;
+			height: 100%;
+			border: 0;
+			position: relative;
+			z-index: 1;
+			opacity: 0;
+			transform: translateY(20px);
+			animation: slideUpFade 1s ease forwards;
+			animation-delay: 3.8s;
+		}
+
+		@keyframes slideUpFade {
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes spin {
+			0% {
+				transform: rotate(0deg);
+			}
+
+			100% {
+				transform: rotate(360deg);
+			}
+		}
+
+		#spinner {
+			position: absolute;
+			top: 50%;
+			left: 50%;
+			width: 40px;
+			height: 40px;
+			margin: -20px 0 0 -20px;
+			border: 6px solid #ccc;
+			border-top: 6px solid var(--accent-color);
+			border-radius: 50%;
+			animation: spin 1s linear infinite, fadeOut 0.5s ease forwards;
+			animation-delay: 0s, 3s;
+			z-index: 9998;
+		}
+
+		#loading-message {
+			position: absolute;
+			top: calc(50% + 50px);
+			left: 50%;
+			transform: translateX(-50%);
+			font-family: 'Lato', sans-serif;
+			font-size: 1.4em;
+			color: #ff6600;
+			text-shadow: 0 0 8px #ff6600;
+			z-index: 9998;
+			text-align: center;
+			animation: fadeOut 0.5s ease forwards;
+			animation-delay: 3s;
+		}
+
+		@keyframes fadeOut {
+			to {
+				opacity: 0;
+				visibility: hidden;
+			}
+		}
+	</style>
+</head>
+
+<body>
+	<div class="overlay">
+		ServerplexGWA S3 File Version
+
+		<a href="https://discord.gg/6zPGduTJRv" target="_blank" class="discord-wrapper" aria-label="Join our Discord">
+			<div class="discord-icon">
+				<img src="https://static.vecteezy.com/system/resources/previews/018/930/604/original/discord-logo-discord-icon-transparent-free-png.png" alt="Discord Icon" />
+      </div>
+				<div class="discord-text">Join our Discord Server Today!</div>
+		</a>
+
+		<svg id="fullscreenIcon" class="fullscreen-toggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path id="iconPath" stroke="white" stroke-width="2" fill="none"
+				d="M9 9L5 5M5 5v4M5 5h4M15 9l4-4M19 5v4M19 5h-4M9 15l-4 4M5 19v-4M5 19h4M15 15l4 4M19 19v-4M19 19h-4" />
+		</svg>
+
+		<svg id="themeToggle" class="theme-toggle" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+			<path d="M12 3a9 9 0 0 0 0 18c4.97 0 9-4.03 9-9 0-4.97-4.03-9-9-9z" />
+		</svg>
+	</div>
+
+	<div id="spinner"></div>
+	<div id="loading-message">Loading...</div>
+
+	<iframe id="delayedIframe" src="https://stephengpt.wixstudio.com/serverplexlink" allowfullscreen></iframe>
+
+	<script>
+		document.addEventListener("DOMContentLoaded", () => {
+      const fullscreenIcon = document.getElementById("fullscreenIcon");
+      const iconPath = document.getElementById("iconPath");
+      const themeToggle = document.getElementById("themeToggle");
+
+      function updateIcon(isFullscreen) {
+        if (isFullscreen) {
+          iconPath.setAttribute("d", "M3 10V3h7v2H5v5H3zm11-7h7v7h-2V5h-5V3zm7 11v7h-7v-2h5v-5h2zM10 21H3v-7h2v5h5v2z");
+          iconPath.removeAttribute("stroke");
+          iconPath.removeAttribute("stroke-width");
+          iconPath.setAttribute("fill", "white");
+        } else {
+          iconPath.setAttribute("d", "M9 9L5 5M5 5v4M5 5h4M15 9l4-4M19 5v4M19 5h-4M9 15l-4 4M5 19v-4M5 19h4M15 15l4 4M19 19v-4M19 19h-4");
+          iconPath.setAttribute("stroke", "white");
+          iconPath.setAttribute("stroke-width", "2");
+          iconPath.setAttribute("fill", "none");
+        }
+      }
+
+      fullscreenIcon.addEventListener("click", () => {
+        if (!document.fullscreenElement) {
+          document.documentElement.requestFullscreen().then(() => updateIcon(true));
+        } else {
+          document.exitFullscreen().then(() => updateIcon(false));
+        }
+      });
+
+      document.addEventListener("fullscreenchange", () => {
+        updateIcon(!!document.fullscreenElement);
+      });
+
+      themeToggle.addEventListener("click", () => {
+        document.body.classList.toggle("light-mode");
+      });
+
+      window.addEventListener("beforeunload", function (e) {
+        e.preventDefault();
+        e.returnValue = "Do you really want to close the tab?";
+      });
+
+      // Random loading message
+      const messages = [
+        "Loading SpGWA S3!",
+        "Loading Entertainment!",
+        "Loading Axel's Thing!",
+        "Loading your cookies",
+        "Loading kitties",
+        "Loading Proxies"
+      ];
+      const randomMessage = messages[Math.floor(Math.random() * messages.length)];
+      document.getElementById("loading-message").textContent = randomMessage;
+    });
+	</script>
+</body>
+
+</html></body><html>
